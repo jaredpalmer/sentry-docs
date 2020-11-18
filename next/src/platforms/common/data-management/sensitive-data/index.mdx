@@ -1,0 +1,83 @@
+---
+title: "Scrubbing Sensitive Data"
+sidebar_order: 1
+keywords: ["pii", "gdpr", "personally identifiable data", "compliance"]
+redirect_from:
+  - /learn/sensitive-data/
+description: "Learn about filtering or scrubbing sensitive data within the SDK, so that data is not sent with the event. You can also configure server-side scrubbing to ensure the data is not stored."
+---
+
+As with any third-party service it’s important to understand what data is being sent to Sentry, and where relevant ensure sensitive data either never reaches the Sentry servers, or at the very least it doesn’t get stored. We recommend filtering or scrubbing sensitive data within the SDK, so that data is not sent with the event, and also [configuring server-side scrubbing](/product/data-management-settings/server-side-scrubbing/) to ensure the data is not stored.
+
+There are two great examples for data scrubbing that every company should think about:
+
+- PII (Personally Identifiable Information) such as a user's name or email address, which post-GDPR should be on every company's mind.
+- Authentication credentials, like your AWS password or key.
+- Confidential IP (Intellectual Property), such as your favorite color, or your upcoming plans for world domination.
+
+## Personally Identifiable Information (PII)
+
+<PlatformSection notSupported={["flutter", "apple", "perl", "native.breakpad", "native.crashpad", "native.minidumps", "native.ue4", "go", "ruby", "native", "elixir"]}>
+
+Our newer SDKs do not purposefully send PII to stay on the safe side. This behavior is controlled by an option called [`send-default-pii`](../../configuration/options/#send-default-pii).
+
+Turning this option on is required for certain features in Sentry to work, but also means you will need to be even more careful about what data is being sent to Sentry (using the options below).
+
+</PlatformSection>
+
+<PlatformSection notSupported={["native.breakpad", "native.crashpad", "native.minidumps", "native.ue4"]}>
+
+If you _do not_ wish to use the default PII behavior, you can also choose to identify users in a more controlled manner, using our [user identity context](../../enriching-events/identify-user/).
+
+</PlatformSection>
+
+<PlatformSection notSupported={["perl", "native.ue4", "native.breakpad", "native.crashpad", "native.minidumps"]}>
+
+## Scrubbing Data
+
+SDKs provide a `before-send` hook, which is invoked before an event is sent and can be used to modify event data to remove sensitive information. Using `before-send` in the SDKs to **scrub any data before it is sent** is the recommended scrubbing approach, so sensitive data never leaves the local environment.
+
+<PlatformContent includePath="configuration/before-send" />
+
+<Note>
+
+Ensure that your team is aware of your company's policy around what can and cannot be sent to Sentry. We recommend determining this policy early in your implementation and communicating it as well as enforcing it via code review.
+
+</Note>
+
+There's a few areas you should consider that sensitive data may appear:
+
+- Stack-locals → some SDKs (Python + PHP), will pick up variable values within the stacktrace. This can be scrubbed or disabled altogether, if necessary
+- Breadcrumbs → some SDKs (for example, JavaScript, Java logging integrations) will pick up previously executed log statements. **Do not log PII** if using this feature and including log statements as breadcrumbs in the event. Some backend SDKs will surface DB queries which may need to be scrubbed
+- User context → automated behavior is controlled via `send-default-pii`
+- HTTP context → query strings may be picked up in some frameworks as part of the HTTP request context
+
+For more details, see <PlatformLink to="/configuration/filtering/">Filtering Events</PlatformLink>.
+
+### Examples
+
+**Contextual information**
+
+Instead of sending confidential information in plaintext, considering hashing it:
+
+<PlatformContent includePath="sensitive-data/set-tag" />
+
+This will allow you to correlate it within internal systems if needed, but keep it confidential from Sentry.
+
+**User details**
+
+Your organization may determine that emails are not considered confidential, but if they are, consider instead sending your internal identifier:
+
+<PlatformContent includePath="sensitive-data/set-user" />
+
+Doing this will ensure you still benefit from user-impact related features.
+
+**Logging integrations**
+
+As a best practice you should always avoid logging confidential information. If you have legacy systems you need to work around, consider the following:
+
+- Anonymize the confidential information within the log statements (for example, swap out email addresses -> for internal identifiers)
+- Use `beforeBreadcrumb` to filter it out from breadcrumbs before it is attached
+- Disable logging breadcrumb integration (for example, as described [here] /platforms/javascript/#breadcrumbs-10)
+
+</PlatformSection>

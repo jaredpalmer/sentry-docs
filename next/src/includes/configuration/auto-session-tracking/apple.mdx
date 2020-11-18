@@ -1,0 +1,19 @@
+```swift {tabTitle:Swift}
+import Sentry
+
+SentrySDK.start { options in
+    options.dsn = "___PUBLIC_DSN___"
+    // If you prefer NOT to track release health.
+    options.enableAutoSessionTracking = false
+}
+```
+
+```objc {tabTitle:Objective-C}
+@import Sentry;
+
+[SentrySDK startWithOptions:@{
+    @"dsn": @"___PUBLIC_DSN___",
+    // If you prefer NOT to track release health.
+    @"enableAutoSessionTracking": @(NO)
+}];
+```

@@ -1,0 +1,25 @@
+```csharp
+using (SentrySdk.Init(o =>
+{
+    o.BeforeSend = @event =>
+    {
+        @event.SetFingerprint(
+            new []
+            {
+                "my-view-function",
+            }
+        );
+
+        return @event;
+    };
+}
+```
+
+```fsharp
+use __ = SentrySdk.Init(fun o ->
+    o.BeforeSend <- (fun event ->
+        event.SetFingerprint(["my-view-function"])
+        event
+        )
+    )
+```

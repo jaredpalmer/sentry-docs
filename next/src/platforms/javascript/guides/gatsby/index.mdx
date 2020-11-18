@@ -1,0 +1,79 @@
+---
+title: Gatsby
+sdk: "sentry.javascript.gatsby"
+redirect_from:
+  - /platforms/javascript/gatsby/
+description: "Learn how to use Sentry with Gatsby."
+---
+
+To use Sentry with your Gatsby application, you will need to use `@sentry/gatsby` (Sentry’s Gatsby SDK):
+
+```bash {tabTitle:NPM}
+npm install --save @sentry/gatsby
+```
+
+```bash {tabTitle:Yarn}
+yarn add @sentry/gatsby
+```
+
+<Note>
+
+`@sentry/gatsby` is a wrapper around the `@sentry/react` package, with added functionality related to Gatsby. All methods available in the `@sentry/react` package can also be imported from `@sentry/gatsby`.
+
+</Note>
+
+## Connecting the SDK to Sentry
+
+Register the plugin in your Gatsby configuration file (typically `gatsby-config.js`).
+
+```javascript {filename:gatsby-config.js}
+{
+  // ...
+  plugins: [
+    {
+      resolve: "@sentry/gatsby",
+      options: {
+        dsn: "___PUBLIC_DSN___",
+      },
+    },
+    // ...
+  ];
+}
+```
+
+## Options
+
+The options field in the plugin configuration is passed directly to `Sentry.init`. Check our configuration docs for a [full list of the available options](configuration/options/).
+
+For example, the configuration below adjusts the `sampleRate` and `maxBreadcrumbs` options.
+
+```javascript
+{
+  // ...
+  plugins: [
+    {
+      resolve: "@sentry/gatsby",
+      options: {
+        dsn: "___PUBLIC_DSN___",
+        maxBreadcrumbs: 80,
+        sampleRate: 0.7,
+      },
+    },
+    // ...
+  ];
+}
+```
+
+The Gatsby SDK will set certain options automatically based on environmental variables, but these can be overridden by setting custom options in the plugin configuration.
+
+`environment` (string)
+
+: Defaults to `process.env.NODE_ENV` or `development`
+
+`release` (string)
+
+: Defaults to certain environmental variables based on the platform
+
+- GitHub Actions: `process.env.GITHUB_SHA`
+- Netlify: `process.env.COMMIT_REF`
+- Vercel: `process.env.VERCEL_GITHUB_COMMIT_SHA` or `process.env.VERCEL_GITLAB_COMMIT_SHA` or `process.env.VERCEL_BITBUCKET_COMMIT_SHA`

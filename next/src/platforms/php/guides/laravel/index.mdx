@@ -1,0 +1,94 @@
+---
+title: Laravel
+sdk: sentry.php.laravel
+sidebar_order: 0
+redirect_from:
+  - /clients/php/integrations/laravel/
+  - /platforms/php/laravel/
+description: "Learn about using Sentry with Laravel."
+---
+
+Laravel is supported via a native package, [sentry-laravel](https://github.com/getsentry/sentry-laravel).
+
+This guide is for Laravel 7+. We also provide instructions for [other versions](configuration/other-versions/) as well as [Lumen-specific instructions](configuration/other-versions/lumen/).
+
+## Install
+
+Install the `sentry/sentry-laravel` package:
+
+```bash
+composer require sentry/sentry-laravel
+```
+
+Add Sentry reporting to `App/Exceptions/Handler.php`.
+
+```php {filename:App/Exceptions/Handler.php}
+public function report(Throwable $exception)
+{
+    if ($this->shouldReport($exception) && app()->bound('sentry')) {
+        app('sentry')->captureException($exception);
+    }
+
+    parent::report($exception);
+}
+```
+
+## Configure
+
+Setup Sentry with this command:
+
+```shell
+php artisan sentry:publish --dsn=___PUBLIC_DSN___
+```
+
+It creates (`config/sentry.php`) and adds the `DSN` to your `.env` file.
+
+```shell {filename:.env}
+SENTRY_LARAVEL_DSN=___PUBLIC_DSN___
+```
+
+## Verify Setup
+
+You can easily verify that Sentry is capturing errors in your Laravel application by creating a debug route that will throw an exception:
+
+```php
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
+```
+
+Visiting this route will trigger an exception that will be captured by Sentry.
+
+### Testing with Artisan
+
+You can test your configuration using the provided `artisan` command:
+
+```shell
+php artisan sentry:test --transaction
+[Sentry] DSN discovered!
+[Sentry] Generating test Event
+[Sentry] Sending test Event
+[Sentry] Sending test Transaction
+[Sentry] Event sent with ID: 5e93086e4fa04bfab50e551712f25ad7
+```
+
+### Local development
+
+When Sentry is installed in your application it will also be active when you are developing.
+If you don't want errors to be sent to Sentry when you are developing, set the DSN value to `null`.
+
+You can do this by not defining `SENTRY_LARAVEL_DSN` in your `.env` or define it as `SENTRY_LARAVEL_DSN=null`.
+
+## Monitor Performance
+
+Set `traces_sample_rate` to a value greater than `0.0` after that, Performance Monitoring will be enabled.
+
+```php {filename:config/sentry.php}
+'traces_sample_rate' => 1.0 # be sure to lower this in production to prevent quota issues
+```
+
+Performance data is transmitted using a new event type called "transactions", which you can learn about in [Distributed Tracing](/product/performance/distributed-tracing/#traces-transactions-and-spans). **To capture transactions, you must install and configure your SDK to set the `traces_sample_rate` option to a nonzero value.** The example configuration above will transmit 100% of captured traces. Be sure to lower this value in production otherwise you could burn through your quota quickly.
+
+Learn more about sampling in [Using Your SDK to Filter Events](configuration/filtering/).
+
+<PageGrid nextPages header="Next Steps" />

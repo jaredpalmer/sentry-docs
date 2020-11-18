@@ -1,0 +1,20 @@
+```swift {tabTitle:Swift}
+import Sentry
+
+SentrySDK.capture(error: error)
+
+// Or
+
+SentrySDK.capture(exception: exception)
+
+```
+
+```objc {tabTitle:Objective-C}
+@import Sentry;
+
+[SentrySDK captureError:error];
+
+// Or
+
+[SentrySDK captureException:exception];
+```

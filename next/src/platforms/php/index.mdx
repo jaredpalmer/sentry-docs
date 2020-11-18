@@ -1,0 +1,72 @@
+---
+title: PHP
+redirect_from:
+  - /clients/php/integrations/monolog/
+---
+
+On this page, we get you up and running with Sentry's PHP SDK, automatically reporting errors and exceptions in your application.
+
+<Note>
+
+If you don't already have an account and Sentry project established, head over to [sentry.io](https://sentry.io/signup/), then return to this page.
+
+</Note>
+
+Using a framework? Take a look at our specific guides to get started.
+
+<GuideGrid platform="php" />
+
+The Sentry PHP SDK provides support for PHP 7.2 or later.
+
+## Install
+
+Sentry captures data by using an SDK within your application’s runtime. These are platform-specific and allow Sentry to have a deep understanding of how your application works.
+
+To install the PHP SDK, you need to be using Composer in your project. For more details about Composer, see the [Composer documentation](https://getcomposer.org/doc/).
+
+```bash
+composer require sentry/sdk
+```
+
+## Configure
+
+After you’ve completed setting up a project in Sentry, Sentry will give you a value which we call a DSN or Data Source Name. It looks a lot like a standard URL, but it’s just a representation of the configuration required by the Sentry SDKs. It consists of a few pieces, including the protocol, public key, the server address, and the project identifier.
+
+To capture all errors, even the one during the startup of your application, you should initialize the Sentry PHP SDK as soon as possible.
+
+```php
+Sentry\init(['dsn' => '___PUBLIC_DSN___' ]);
+```
+
+## Usage
+
+In PHP you can either capture a caught exception or capture the last error with captureLastError.
+
+```php
+try {
+    $this->functionFailsForSure();
+} catch (\Throwable $exception) {
+    Sentry\captureException($exception);
+}
+
+// OR
+
+Sentry\captureLastError();
+```
+
+## Monitor Performance
+
+Just set `traces_sample_rate` to a value greater than `0.0` after that, Performance Monitoring will be enabled.
+
+```php
+Sentry\init([
+  'dsn' => '___PUBLIC_DSN___',
+  'traces_sample_rate' => 1.0 # be sure to lower this in production to prevent quota issues
+  ]);
+```
+
+Performance data is transmitted using a new event type called "transactions", which you can learn about in [Distributed Tracing](/product/performance/distributed-tracing/#traces-transactions-and-spans). **To capture transactions, you must install and configure your SDK to set the `traces_sample_rate` option to a nonzero value.** The example configuration above will transmit 100% of captured traces. Be sure to lower this value in production otherwise you could burn through your quota quickly.
+
+Learn more about sampling in [Using Your SDK to Filter Events](configuration/filtering/).
+
+<PageGrid header="Next Steps" nextSteps />

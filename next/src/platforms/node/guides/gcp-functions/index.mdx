@@ -1,0 +1,71 @@
+---
+title: GCP Functions
+redirect_from:
+  - /platforms/node/gcp_functions/
+description: "Learn about using Sentry with GCP Cloud Functions."
+---
+
+_(New in version 5.26.0)_
+
+Add `@sentry/serverless` as a dependency to `package.json`:
+
+```bash
+  "@sentry/serverless": "^5.26.0"
+```
+
+To set up Sentry for a GCP Cloud Function:
+
+```javascript {tabTitle:http functions}
+const Sentry = require("@sentry/serverless");
+
+Sentry.GCPFunction.init({
+  dsn: "___PUBLIC_DSN___",
+  tracesSampleRate: 1.0,
+});
+
+exports.helloHttp = Sentry.GCPFunction.wrapHttpFunction((req, res) => {
+  throw new Error('oh, hello there!');
+});
+```
+
+```javascript {tabTitle:background functions}
+const Sentry = require("@sentry/serverless");
+
+Sentry.GCPFunction.init({
+  dsn: "___PUBLIC_DSN___",
+  tracesSampleRate: 1.0,
+});
+
+exports.helloEvents = Sentry.GCPFunction.wrapEventFunction((data, context, callback) => {
+  throw new Error('oh, hello there!');
+});
+```
+
+```javascript {tabTitle:cloudEvents}
+const Sentry = require("@sentry/serverless");
+
+Sentry.GCPFunction.init({
+  dsn: "___PUBLIC_DSN___",
+  tracesSampleRate: 1.0,
+});
+
+exports.helloEvents = Sentry.GCPFunction.wrapCloudEventFunction((context, callback) => {
+  throw new Error('oh, hello there!');
+});
+```
+
+Check out Sentry's [GCP sample apps](https://github.com/getsentry/examples/tree/master/gcp-cloud-functions/node) for detailed examples. Refer to the [JavaScript docs](/platforms/javascript/) for more configuration options.
+
+## Behavior
+
+With the GCP Cloud Functions integration enabled, the Node SDK will:
+
+- Automatically report all events from your Cloud Functions.
+- Allows you to <PlatformLink to="/configuration/filtering/#filtering-transaction-events">modify the transaction sample rate</PlatformLink> using <PlatformIdentifier name="traces-sample-rate" />.
+- Issue reports automatically include:
+  - A link to the Stackdriver logs
+  - Function details
+  - sys.argv for the function
+  - Function execution time
+  - Function version
+- Sentry holds the thread for up to two seconds to report errors. You can change flush time limit by defining a `flushTimeout` value in the handler options
