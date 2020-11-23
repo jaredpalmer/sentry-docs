@@ -1,7 +1,7 @@
 import path from "path";
 import { Node } from "gatsby";
 import { createFilePath } from "gatsby-source-filesystem";
-
+import fs from "fs";
 import PlatformRegistry, {
   Platform,
   Guide,
@@ -217,13 +217,28 @@ export default async ({ actions, graphql, reporter, getNode }) => {
 
   // begin creating pages from `platforms`
   const component = require.resolve(`../../templates/platform.tsx`);
-
+  const pageMap = {};
   const createPlatformPage = (
     node: FileNode,
     path: string,
     context: { [key: string]: any }
   ) => {
     const child = getChild(node);
+    if (
+      path.includes("javascript") ||
+      path.includes("node") ||
+      path.includes("java")
+    ) {
+      pageMap[path] = {
+        url: path,
+        slug: path
+          .replace("/platforms/", "")
+          .substr(0, path.length - 2)
+          .split("/")
+          .filter(Boolean),
+        path: node.relativePath,
+      };
+    }
     actions.createPage({
       path: path,
       component,
@@ -459,4 +474,6 @@ export default async ({ actions, graphql, reporter, getNode }) => {
       },
     });
   }
+
+  fs.writeFileSync("pages.json", JSON.stringify(pageMap, null, 2));
 };

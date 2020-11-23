@@ -18,7 +18,7 @@ module.exports = (opts = {}) => (tree) => {
     if (node.name === "PlatformContent") {
       // console.log("opts", opts);
 
-      const { value } = node.attributes.find((a) => a.name === "foo");
+      const { value } = node.attributes.find((a) => a.name === "includePath");
 
       if (!value) {
         return;
@@ -37,14 +37,19 @@ module.exports = (opts = {}) => (tree) => {
         value,
         "_default.mdx"
       );
-
+      let raw;
+      const includesExists = fs.existsSync(includesPath);
+      if (includesExists) {
+        raw = fs.readFileSync(includesPath);
+      } else if (fs.existsSync(fallbackPath)) {
+        raw = fs.readFileSync(fallbackPath);
+      }
       // console.log("path", contentPath);
 
-      const raw = await fs.readFile(includesPath);
-
       // console.log("raw", raw);
-
-      node.children = parse(raw);
+      if (raw) {
+        node.children = parse(raw);
+      }
       // parent.children.splice(index, 1, ...newNode);
     }
   });

@@ -1,0 +1,29 @@
+diff --git a/node_modules/@github-docs/data-directory/index.js b/node_modules/@github-docs/data-directory/index.js
+index e4930dc..7760be0 100644
+--- a/node_modules/@github-docs/data-directory/index.js
++++ b/node_modules/@github-docs/data-directory/index.js
+@@ -13,6 +13,7 @@ module.exports = function dataDirectory (dir, opts = {}) {
+     extensions: [
+       '.json',
+       '.md',
++      '.mdx',
+       '.markdown',
+       '.yaml',
+       '.yml'
+@@ -46,7 +47,7 @@ module.exports = function dataDirectory (dir, opts = {}) {
+ 
+       let fileContent = fs.readFileSync(filename, 'utf8')
+ 
+-      if (opts.preprocess) fileContent = opts.preprocess(fileContent)
++      if (opts.preprocess) fileContent = opts.preprocess(fileContent, extension)
+ 
+       // add this file's data to the global data object
+       switch (extension) {
+@@ -58,6 +59,7 @@ module.exports = function dataDirectory (dir, opts = {}) {
+           set(data, key, yaml.safeLoad(fileContent, { filename }))
+           break
+         case '.md':
++        case '.mdx':
+         case '.markdown':
+           set(data, key, fileContent)
+           break
