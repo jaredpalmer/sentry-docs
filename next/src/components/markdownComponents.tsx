@@ -14,14 +14,19 @@ const H2 = (props) => {
   const { platform } = React.useContext(PlatformContext);
   return <h2>{props.children} </h2>;
 };
+const Code = (props) => {
+  return <pre>{props.children} </pre>;
+};
 
 const components = {
   PlatformContent,
   Note,
   Alert,
   h2: H2,
+  pre: (p) => <div {...p} />,
+  code: Code,
   PlatformLink,
-  A: SmartLink,
+  a: SmartLink,
   PageGrid,
   PlatformIdentifier,
   PlatformSection,

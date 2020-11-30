@@ -2,6 +2,7 @@ import * as React from "react";
 
 export interface PlatformContextType {
   platform: any;
+  platforms: any;
   guide: string;
   frontMatter: any;
 }

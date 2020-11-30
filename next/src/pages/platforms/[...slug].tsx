@@ -1,30 +1,56 @@
-import * as React from "react";
 import fs from "fs-extra";
-import matter from "gray-matter";
+import matter, { read } from "gray-matter";
+import yaml from "js-yaml";
 import hydrate from "next-mdx-remote/hydrate";
 import renderToString from "next-mdx-remote/render-to-string";
 import { useRouter } from "next/router";
 import path from "path";
-import plugin from "../../plugins/mdxCompiler";
+import * as React from "react";
+import addRouterEvents from "~src/components/addRouterEvents";
 import components from "~src/components/markdownComponents";
 import PlatformContext from "~src/components/platformContext";
-import PlatformRegistry from "~src/shared/platformRegistry";
-
-const Markdown = ({ mdxSource }: any) => {
-  const content = hydrate(mdxSource, { components });
-  return <>{content}</>;
-};
+import plugin from "../../plugins/mdxCompiler";
 
 export default function BlogPost({
   mdxSource,
-  platform,
-  guide,
   slug,
+  platforms,
+  guide,
   frontMatter,
 }) {
   const router = useRouter();
+  React.useEffect(() => {
+    const listeners = [];
+    document
+      .querySelectorAll(".docs-content .relative-link")
+      .forEach((node) => {
+        console.log(node);
+        const href = node.getAttribute("href");
+        // Exclude paths like #setup and hashes that have the same current path
+        if (href && href[0] !== "#") {
+          // Handle any relative path
+          router.prefetch(href);
+
+          listeners.push(addRouterEvents(node, router, { href }));
+        }
+      });
+    return () => {
+      listeners.forEach((cleanUpListener) => cleanUpListener());
+    };
+  }, [router]);
+
+  const content = hydrate(mdxSource, {
+    components: {
+      ...components,
+      wrapper: ({ children }) => (
+        <PlatformContext.Provider value={{ platforms, guide, frontMatter }}>
+          {children}
+        </PlatformContext.Provider>
+      ),
+    },
+  });
   return (
-    <PlatformContext.Provider value={{ platform, guide, frontMatter }}>
+    <>
       <h1>{frontMatter.title}</h1>
       <a
         href={`https://docs.sentry.io${router.asPath}`}
@@ -35,16 +61,24 @@ export default function BlogPost({
       </a>
       <select
         value={router.query.slug[0]}
-        onChange={(e) => router.push(`/platforms/${e.target.value}/`)}
+        onChange={(e) =>
+          router.push(
+            `/platforms/${e.target.value}/${router.asPath.replace(
+              `/platforms/${router.query.slug[0]}/`,
+              ""
+            )}`
+          )
+        }
       >
         <option>javascript</option>
         <option>node</option>
         <option>ruby</option>
         <option>java</option>
       </select>
-
-      <Markdown mdxSource={mdxSource} />
-    </PlatformContext.Provider>
+      <div className="docs-content">
+        <>{content}</>
+      </div>
+    </>
   );
 }
 
@@ -98,14 +132,65 @@ const getMdxAtPath = (filepath: string) => {
 
   return source;
 };
+
+const parseConfigFrontmatter = async (path: string) => {
+  const { data: frontmatter } = read(path);
+  console.log("configFrontmatter", frontmatter);
+  return Object.fromEntries(
+    Object.entries(frontmatter).filter(([key]) => frontmatterConfig.has(key))
+  );
+};
+
+const frontmatterConfig = new Set([
+  "title",
+  "caseStyle",
+  "supportLevel",
+  "sdk",
+  "fallbackPlatform",
+  "categories",
+  "aliases",
+]);
+const shareableConfig = new Set([
+  "caseStyle",
+  "supportLevel",
+  "fallbackPlatform",
+  "sdk",
+  "categories",
+]);
+
+const DEFAULTS = {
+  caseStyle: "canonical",
+  supportLevel: "production",
+};
+
+type Config = {
+  title?: string;
+  caseStyle?: string;
+  supportLevel?: string;
+  sdk?: string;
+  fallbackPlatform?: string;
+  categories?: string[];
+  aliases?: string[];
+};
+
+const parseConfig = async (path: string): Promise<Config> => {
+  let config = {};
+  try {
+    config = await parseConfigFrontmatter(`${path}/index.mdx`);
+  } catch (err) {
+    // console.log(err);
+  }
+
+  try {
+    const fp = fs.readFileSync(`${path}/config.yml`, "utf8");
+    Object.assign(config, yaml.safeLoad(fp));
+  } catch (err) {
+    // console.log(err);
+  }
+  return config;
+};
 export async function getServerSideProps(ctx) {
   const { params, resolvedUrl, ...rest } = ctx;
-  // console.log(ctx);
-  const registry = new PlatformRegistry(
-    path.resolve(path.join("src", "platforms"))
-  );
-  await registry.init();
-
   console.log("params: ", params);
   console.log("path: ", params.slug.join("/"));
   const platform =
@@ -117,6 +202,52 @@ export async function getServerSideProps(ctx) {
   console.log("guide: ", guide);
   console.log("key: ", key);
 
+  const rawPlatformConfig = await parseConfig(
+    path.resolve(path.join("src", "platforms", platform))
+  );
+  console.log(rawPlatformConfig);
+
+  let rawFallbackConfig = {};
+  let shareableFallbackConfig = {};
+  if (rawPlatformConfig.fallbackPlatform) {
+    rawFallbackConfig = await parseConfig(
+      path.resolve(
+        path.join("src", "platforms", rawPlatformConfig.fallbackPlatform)
+      )
+    );
+    shareableFallbackConfig = Object.fromEntries(
+      Object.entries(rawPlatformConfig).filter(([key]) =>
+        shareableConfig.has(key)
+      )
+    );
+  }
+  const shareablePlatformConfig = Object.fromEntries(
+    Object.entries(rawPlatformConfig).filter(([key]) =>
+      shareableConfig.has(key)
+    )
+  );
+  let rawGuideConfig = {};
+  let shareableGuideConfig = {};
+  if (guide) {
+    rawGuideConfig = await parseConfig(
+      path.resolve(path.join("src", "platforms", platform, "guides", guide))
+    );
+
+    shareableGuideConfig = Object.fromEntries(
+      Object.entries(rawGuideConfig).filter(([key]) => shareableConfig.has(key))
+    );
+  }
+
+  console.log({
+    ...shareableFallbackConfig,
+    ...shareablePlatformConfig,
+    ...shareableGuideConfig,
+  });
+  const platforms = [
+    guide && guide,
+    platform && platform,
+    rawPlatformConfig && rawPlatformConfig.fallbackPlatform,
+  ].filter(Boolean);
   // /platforms/java/guides/log4j2/enriching-events/user-feedback -> java/common/enriching-events/user-feedback.mdx
   // /platforms/javascript/guides/react/components/errorboundary/ : javascript/guides/react/components/errorboundary.mdx
   //  javascript/guides/react/components -> javascript/guides/react/components/index.mdx
@@ -132,7 +263,7 @@ export async function getServerSideProps(ctx) {
       "platforms",
       platform,
       "common",
-      ...params.slug.slice(3)
+      ...(guide ? params.slug.slice(3) : params.slug.slice(1))
     );
     source = getMdxAtPath(platformCommon);
     if (!source) {
@@ -141,27 +272,42 @@ export async function getServerSideProps(ctx) {
         "src",
         "platforms",
         "common",
-        ...params.slug.slice(3)
+        ...(guide ? params.slug.slice(3) : params.slug.slice(1))
       );
       source = getMdxAtPath(sharedCommon);
-      if (source) {
-        console.log();
-      }
     }
+  }
+
+  if (!source) {
+    return { notFound: true };
   }
 
   // Collect frontmatter and content (useful later?)
   const { data, content } = matter(source);
 
+  if (!content) {
+    return { notFound: true };
+  }
+
   // Call renderToString with dynamic resolution for <PlatformContent>
   const mdxSource = await renderToString(content, {
-    components,
-    mdxOptions: {
-      remarkPlugins: [[plugin, { platform, frontmatter: data }]],
+    components: {
+      ...components,
+      wrapper: ({ children }) => (
+        <PlatformContext.Provider
+          value={{
+            frontMatter: data,
+            platform,
+            platforms,
+            guide,
+          }}
+        >
+          {children}
+        </PlatformContext.Provider>
+      ),
     },
-    scope: {
-      platform,
-      ...data,
+    mdxOptions: {
+      remarkPlugins: [[plugin, { platform, platforms, frontmatter: data }]],
     },
   });
 
@@ -169,7 +315,7 @@ export async function getServerSideProps(ctx) {
     props: {
       mdxSource,
       frontMatter: data,
-      platform: registry.get(key),
+      platforms,
       guide,
       slug: params.slug,
     },

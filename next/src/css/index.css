@@ -64,11 +64,10 @@ pre[class*="language-"] {
 
 a .icon {
   margin-left: 0.25em;
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
+}
+a.icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 ul p,
@@ -78,4 +77,10 @@ ul ol,
 ol,
 ul {
   margin-bottom: 1rem;
+}
+
+.icon.icon-external-link > svg {
+  font-size: 0.85em;
+  height: 0.85em;
+  width: 0.85em;
 }

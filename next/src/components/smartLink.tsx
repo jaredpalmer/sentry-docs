@@ -1,7 +1,6 @@
-import React from "react";
+import * as React from "react";
 import Link from "next/link";
 import ExternalLink from "./externalLink";
-import { useRouter } from "next/router";
 
 type Props = {
   href?: string;
@@ -18,10 +17,10 @@ export default function SmartLink({
   activeClassName = "active",
   remote = false,
   className = "",
+  to,
   ...props
 }: Props): JSX.Element {
-  const router = useRouter();
-  const realTo = href || "";
+  const realTo = href || to || "";
   if (realTo.indexOf("://") !== -1) {
     return (
       <ExternalLink href={realTo} className={className} {...props}>
@@ -31,20 +30,16 @@ export default function SmartLink({
   } else if (realTo.indexOf("/") !== 0 || remote) {
     // this handles cases like anchor tags (where Link messes thats up)
     return (
-      <a href={realTo} className={className} {...props}>
+      <a href={realTo} className={`relative-link ${className}`} {...props}>
         {children || href}
       </a>
     );
   }
-  const isActive = router.pathname === realTo;
+  // const isActive = asPath === realTo;
+
   return (
-    <Link href={realTo}>
-      <a
-        {...props}
-        className={isActive ? `${activeClassName} ${className}` : className}
-      >
-        {children || href}
-      </a>
-    </Link>
+    <a href={realTo} {...props} className={`relative-link ${className}`}>
+      {children || href}
+    </a>
   );
 }

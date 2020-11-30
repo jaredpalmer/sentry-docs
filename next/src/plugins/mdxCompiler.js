@@ -30,29 +30,20 @@ module.exports = (opts = {}) => (tree) => {
       if (!value) {
         return;
       }
+      const pathsToLookFor = [
+        // Lookup and then read the file in the includes directory
+        // and potentially also the fallback given the value of the `includePath` prop
+        ...opts.platforms.map((p) =>
+          path.join(process.cwd(), "src", "includes", value, p + ".mdx")
+        ),
+        path.join(process.cwd(), "src", "includes", value, "_default.mdx"),
+      ];
 
-      // Lookup and then read the file in the includes directory
-      // and potentially also the fallback given the value of the `includePath` prop
-      const includesPath = path.join(
-        process.cwd(),
-        "src",
-        "includes",
-        value,
-        opts.platform + ".mdx"
-      );
-      const fallbackPath = path.join(
-        process.cwd(),
-        "src",
-        "includes",
-        value,
-        "_default.mdx"
-      );
       let raw;
-      const includesExists = fs.existsSync(includesPath);
-      if (includesExists) {
+      let includesPath = pathsToLookFor.find((fp) => fs.existsSync(fp));
+
+      if (includesPath) {
         raw = fs.readFileSync(includesPath, "utf8");
-      } else if (fs.existsSync(fallbackPath)) {
-        raw = fs.readFileSync(fallbackPath, "utf8");
       }
       // console.log("path", contentPath);
       // console.log("raw", raw);
