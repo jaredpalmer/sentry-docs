@@ -45,7 +45,7 @@ Example configuration using the `logback.xml` format:
         </encoder>
     </appender>
 
-    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <options>
             <!-- NOTE: Replace the test DSN below with YOUR OWN DSN to see the events from this app in your Sentry project/dashboard -->
@@ -79,7 +79,6 @@ If the DSN is not present in the `logback.xml` configuration, Sentry will attemp
 
 ### Advanced Configuration
 
-<!-- TODO: link to correct site with explanation of each configuration property -->
 Optionally you can configure other values such as `environment` and `release`. [See the configuration page](configuration/options/) for the in-depth explanation of each property.
 
 ```xml

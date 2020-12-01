@@ -11,7 +11,7 @@ description: "Custom contexts allow you to attach arbitrary data (strings, lists
 
 Custom contexts allow you to attach arbitrary data to an event. You cannot search these, but they are viewable on the issue page:
 
-![Custom contexts as viewed on the Additional Data section of an event](additional_data.png)
+![Custom contexts as viewed on the Additional Data section of an event](/images/additional_data.png)
 
 <Note>
 
@@ -62,7 +62,7 @@ Sentry.captureException(new Error("something went wrong"), {
 Explicitly clear what has been already stored on the scope:
 
 ```javascript
-Sentry.captureException(new Error("clean as never"), scope => {
+Sentry.captureException(new Error("clean as never"), (scope) => {
   scope.clear();
   scope.setTag("clean", "slate");
   return scope;
@@ -103,7 +103,7 @@ Sentry.setUser(someUser);
 This will be changed only for the error caught inside the `withScope` callback and automatically restored to the previous value afterward:
 
 ```javascript
-Sentry.withScope(function(scope) {
+Sentry.withScope(function (scope) {
   scope.setUser(someUser);
   Sentry.captureException(error);
 });
@@ -112,7 +112,7 @@ Sentry.withScope(function(scope) {
 If you want to remove globally configured data from the scope, you can call:
 
 ```javascript
-Sentry.configureScope(scope => scope.clear());
+Sentry.configureScope((scope) => scope.clear());
 ```
 
 To learn more about setting the Scope, see our documentation on [Scopes and Hubs](../scopes/).
