@@ -11,13 +11,20 @@ import components from "~src/components/markdownComponents";
 import PlatformContext from "~src/components/platformContext";
 import plugin from "../../plugins/mdxCompiler";
 
-export default function BlogPost({
+interface PlatformPageProps {
+  mdxSource: string;
+  slug?: string[];
+  guide?: string;
+  platforms: string[];
+  frontmatter: any;
+}
+export default function PlatformPage({
   mdxSource,
   slug,
   platforms,
   guide,
   frontMatter,
-}) {
+}: PlatformPageProps) {
   const router = useRouter();
   React.useEffect(() => {
     const listeners = [];
@@ -106,12 +113,12 @@ export type Platform = {
 };
 
 const getPlatfromFromUrl = (url: string): string | null => {
-  const match = url.match(/^([^\/]+)\//);
+  const match = url.match(/^([^/]+)\//);
   return match ? match[1] : null;
 };
 
 const getGuideFromUrl = (url: string): string | null => {
-  const match = url.match(/^[^\/]+\/guides\/([^\/]+)\//);
+  const match = url.match(/^[^/]+\/guides\/([^/]+)\//);
   return match ? match[1] : null;
 };
 
@@ -150,6 +157,7 @@ const frontmatterConfig = new Set([
   "categories",
   "aliases",
 ]);
+
 const shareableConfig = new Set([
   "caseStyle",
   "supportLevel",
@@ -238,11 +246,12 @@ export async function getServerSideProps(ctx) {
     );
   }
 
-  console.log({
-    ...shareableFallbackConfig,
-    ...shareablePlatformConfig,
-    ...shareableGuideConfig,
-  });
+  const config = {
+    ...rawFallbackConfig,
+    ...rawPlatformConfig,
+    ...rawGuideConfig,
+  };
+
   const platforms = [
     guide && guide,
     platform && platform,
@@ -297,7 +306,6 @@ export async function getServerSideProps(ctx) {
         <PlatformContext.Provider
           value={{
             frontMatter: data,
-            platform,
             platforms,
             guide,
           }}
@@ -314,7 +322,7 @@ export async function getServerSideProps(ctx) {
   return {
     props: {
       mdxSource,
-      frontMatter: data,
+      frontMatter: { ...config, ...data },
       platforms,
       guide,
       slug: params.slug,
