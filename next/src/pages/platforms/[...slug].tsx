@@ -16,15 +16,14 @@ interface PlatformPageProps {
   slug?: string[];
   guide?: string;
   platforms: string[];
-  frontmatter: any;
+  frontMatter: any;
 }
 export default function PlatformPage({
   mdxSource,
-  slug,
   platforms,
   guide,
   frontMatter,
-}: PlatformPageProps) {
+}: PlatformPageProps): JSX.Element {
   const router = useRouter();
   React.useEffect(() => {
     const listeners = [];
@@ -38,7 +37,11 @@ export default function PlatformPage({
           // Handle any relative path
           router.prefetch(href);
 
-          listeners.push(addRouterEvents(node, router, { href }));
+          listeners.push(
+            addRouterEvents(node, router, {
+              href,
+            })
+          );
         }
       });
     return () => {
@@ -158,18 +161,13 @@ const frontmatterConfig = new Set([
   "aliases",
 ]);
 
-const shareableConfig = new Set([
-  "caseStyle",
-  "supportLevel",
-  "fallbackPlatform",
-  "sdk",
-  "categories",
-]);
-
-const DEFAULTS = {
-  caseStyle: "canonical",
-  supportLevel: "production",
-};
+// const shareableConfig = new Set([
+//   "caseStyle",
+//   "supportLevel",
+//   "fallbackPlatform",
+//   "sdk",
+//   "categories",
+// ]);
 
 type Config = {
   title?: string;
@@ -198,9 +196,10 @@ const parseConfig = async (path: string): Promise<Config> => {
   return config;
 };
 export async function getServerSideProps(ctx) {
-  const { params, resolvedUrl, ...rest } = ctx;
+  const { params, resolvedUrl } = ctx;
   console.log("params: ", params);
   console.log("path: ", params.slug.join("/"));
+  // const resolvedUrl = "/platforms/" + params.slug.join("/");
   const platform =
     getPlatfromFromUrl(resolvedUrl.replace("/platforms/", "")) ??
     params.slug[0];
@@ -216,33 +215,18 @@ export async function getServerSideProps(ctx) {
   console.log(rawPlatformConfig);
 
   let rawFallbackConfig = {};
-  let shareableFallbackConfig = {};
   if (rawPlatformConfig.fallbackPlatform) {
     rawFallbackConfig = await parseConfig(
       path.resolve(
         path.join("src", "platforms", rawPlatformConfig.fallbackPlatform)
       )
     );
-    shareableFallbackConfig = Object.fromEntries(
-      Object.entries(rawPlatformConfig).filter(([key]) =>
-        shareableConfig.has(key)
-      )
-    );
   }
-  const shareablePlatformConfig = Object.fromEntries(
-    Object.entries(rawPlatformConfig).filter(([key]) =>
-      shareableConfig.has(key)
-    )
-  );
   let rawGuideConfig = {};
-  let shareableGuideConfig = {};
+
   if (guide) {
     rawGuideConfig = await parseConfig(
       path.resolve(path.join("src", "platforms", platform, "guides", guide))
-    );
-
-    shareableGuideConfig = Object.fromEntries(
-      Object.entries(rawGuideConfig).filter(([key]) => shareableConfig.has(key))
     );
   }
 
@@ -329,3 +313,42 @@ export async function getServerSideProps(ctx) {
     },
   };
 }
+
+// export async function getStaticPaths() {
+//   return {
+//     paths: ["/platforms/android/"],
+//     fallback: false, // See the "fallback" section below
+//   };
+// }
+
+interface Item {
+  path: string;
+  title: string;
+  parent: string;
+  children: string[];
+}
+
+interface Tree {
+  rootPath: string;
+  [key: string]: Item;
+}
+
+const getItem = (tree: Tree, path: string) => {
+  return tree[path];
+};
+
+const expandItem = (tree: Tree, path: string) => {
+  const { children, ...item } = getItem(tree, path);
+  if (children.length > 0) {
+    return children.map((childId) => {
+      const { children: grandKids, ...child } = getItem(tree, childId);
+      return {
+        ...child,
+        children:
+          grandKids && grandKids.length > 0
+            ? grandKids.map((gid) => expandItem(tree, gid))
+            : {},
+      };
+    });
+  }
+};

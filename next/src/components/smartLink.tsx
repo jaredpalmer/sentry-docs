@@ -1,5 +1,5 @@
-import * as React from "react";
 import Link from "next/link";
+import * as React from "react";
 import ExternalLink from "./externalLink";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   activeClassName?: string;
   className?: string;
   title?: string;
+  to?: string;
 };
 
 export default function SmartLink({
@@ -37,7 +38,13 @@ export default function SmartLink({
   }
   // const isActive = asPath === realTo;
 
-  return (
+  return typeof window !== "undefined" ? (
+    <Link href={realTo} prefetch={true}>
+      <a {...props} className={`relative-link ${className}`}>
+        {children || href}
+      </a>
+    </Link>
+  ) : (
     <a href={realTo} {...props} className={`relative-link ${className}`}>
       {children || href}
     </a>

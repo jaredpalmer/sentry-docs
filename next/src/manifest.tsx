@@ -8,7 +8,7 @@ export function getPlatformData() {
     process: (raw, extension) => {
       if (extension === ".mdx") {
         console.log(extension);
-        const { content, data } = fm(raw);
+        const { content } = fm(raw);
         return content;
       }
       return raw;
