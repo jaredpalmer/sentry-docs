@@ -10,7 +10,7 @@ import addRouterEvents from "~src/components/addRouterEvents";
 import components from "~src/components/markdownComponents";
 import PlatformContext from "~src/components/platformContext";
 import plugin from "../../plugins/mdxCompiler";
-
+import globby from "globby";
 interface PlatformPageProps {
   mdxSource: string;
   slug?: string[];
@@ -302,6 +302,76 @@ export async function getServerSideProps(ctx) {
       remarkPlugins: [[plugin, { platform, platforms, frontmatter: data }]],
     },
   });
+  console.log(platforms);
+
+  const manifest = {};
+  const parents = reverseArray(platforms);
+  const commonPaths = await globby(`src/platforms/common/**/*.mdx`);
+  const toPath = (str) =>
+    str?.replace("src", "").replace(".mdx", "").replace("/index", "") + "/";
+
+  if (guide) {
+    for (const realPath of commonPaths) {
+      const path = realPath.replace("/common/", `/${platform}/guide/${guide}/`);
+      const {
+        data: { title, sidebar_order = null, sidebar_title = null },
+      } = read(realPath);
+      manifest[toPath(path)] = {
+        src: realPath,
+        path: toPath(path),
+        context: {
+          platform: { name: platform },
+          title,
+          sidebar_order,
+          sidebar_title,
+        },
+        isCommon: true,
+        isGuide: true,
+      };
+    }
+
+    for (const p of parents) {
+      const platformPaths = await globby(`src/platforms/${p}/**/*.mdx`);
+      console.log(p);
+      for (const realPath of platformPaths) {
+        let path;
+        if (!realPath.includes("guides")) {
+          // common
+
+          path = realPath.replace(
+            `/${p}/common/`,
+            `/${platform}/guide/${guide}/`
+          );
+          const {
+            data: { title, sidebar_order, sidebar_title },
+          } = read(realPath);
+          manifest[toPath(path)] = {
+            src: realPath,
+            path: toPath(path),
+            context: {
+              platform: { name: platform },
+              title,
+              sidebar_order,
+              sidebar_title,
+            },
+            isCommon: true,
+            isGuide: true,
+          };
+        }
+      }
+    }
+  }
+
+  await fs.writeFile(
+    "manifes.json",
+    JSON.stringify(
+      toTree(Object.values(manifest).filter((n) => !!n.context)),
+      null,
+      2
+    ),
+    "utf8"
+  );
+  console.log(Object.keys(manifest));
 
   return {
     props: {
@@ -321,34 +391,52 @@ export async function getServerSideProps(ctx) {
 //   };
 // }
 
-interface Item {
+function reverseArray<T>(arr: T[]): T[] {
+  const newArray = [];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    newArray.push(arr[i]);
+  }
+  return newArray;
+}
+
+type Node = {
   path: string;
-  title: string;
-  parent: string;
-  children: string[];
-}
-
-interface Tree {
-  rootPath: string;
-  [key: string]: Item;
-}
-
-const getItem = (tree: Tree, path: string) => {
-  return tree[path];
+  context: {
+    title?: string | null;
+    sidebar_order?: number | null;
+    sidebar_title?: string | null;
+    [key: string]: any;
+  };
+  [key: string]: any;
 };
 
-const expandItem = (tree: Tree, path: string) => {
-  const { children, ...item } = getItem(tree, path);
-  if (children.length > 0) {
-    return children.map((childId) => {
-      const { children: grandKids, ...child } = getItem(tree, childId);
-      return {
-        ...child,
-        children:
-          grandKids && grandKids.length > 0
-            ? grandKids.map((gid) => expandItem(tree, gid))
-            : {},
-      };
+type Entity<T> = {
+  name: string;
+  children: T[];
+  node: Node | null;
+};
+export const toTree = (nodeList: Node[]): EntityTree[] => {
+  const result = [];
+  const level = { result };
+
+  nodeList
+    .sort((a, b) => a.path.localeCompare(b.path))
+    .forEach((node) => {
+      let curPath = "";
+      node.path.split("/").reduce((r, name: string, i, a) => {
+        curPath += `${name}/`;
+        if (!r[name]) {
+          r[name] = { result: [] };
+          r.result.push({
+            name,
+            children: r[name].result,
+            node: curPath === node.path ? node : null,
+          });
+        }
+
+        return r[name];
+      }, level);
     });
-  }
+
+  return result[0].children;
 };
