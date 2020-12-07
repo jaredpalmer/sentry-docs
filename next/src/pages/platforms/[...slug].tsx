@@ -310,54 +310,54 @@ export async function getServerSideProps(ctx) {
   const toPath = (str) =>
     str?.replace("src", "").replace(".mdx", "").replace("/index", "") + "/";
 
-  if (guide) {
-    for (const realPath of commonPaths) {
-      const path = realPath.replace("/common/", `/${platform}/guide/${guide}/`);
-      const {
-        data: { title, sidebar_order = null, sidebar_title = null },
-      } = read(realPath);
-      manifest[toPath(path)] = {
-        src: realPath,
-        path: toPath(path),
-        context: {
-          platform: { name: platform },
-          title,
-          sidebar_order,
-          sidebar_title,
-        },
-        isCommon: true,
-        isGuide: true,
-      };
-    }
+  for (const realPath of commonPaths) {
+    const path = realPath.replace(
+      "/common/",
+      guide ? `/${platform}/guide/${guide}/` : `/${platform}/`
+    );
 
-    for (const p of parents) {
-      const platformPaths = await globby(`src/platforms/${p}/**/*.mdx`);
-      console.log(p);
-      for (const realPath of platformPaths) {
-        let path;
-        if (!realPath.includes("guides")) {
-          // common
+    const {
+      data: { title, sidebar_order = null, sidebar_title = null },
+    } = read(realPath);
+    manifest[toPath(path)] = {
+      src: realPath,
+      path: toPath(path),
+      context: {
+        platform: { name: platform },
+        title,
+        sidebar_order,
+        sidebar_title,
+      },
+      isCommon: true,
+      isGuide: true,
+    };
+  }
 
-          path = realPath.replace(
-            `/${p}/common/`,
-            `/${platform}/guide/${guide}/`
-          );
-          const {
-            data: { title, sidebar_order, sidebar_title },
-          } = read(realPath);
-          manifest[toPath(path)] = {
-            src: realPath,
-            path: toPath(path),
-            context: {
-              platform: { name: platform },
-              title,
-              sidebar_order,
-              sidebar_title,
-            },
-            isCommon: true,
-            isGuide: true,
-          };
-        }
+  for (const p of parents) {
+    const platformPaths = await globby(`src/platforms/${p}/**/*.mdx`);
+    console.log(p);
+    for (const realPath of platformPaths) {
+      let path;
+      if (!realPath.includes("guides")) {
+        path = realPath.replace(
+          `/${p}/common/`,
+          guide ? `/${platform}/guide/${guide}/` : `/${platform}/`
+        );
+        const {
+          data: { title, sidebar_order, sidebar_title },
+        } = read(realPath);
+        manifest[toPath(path)] = {
+          src: realPath,
+          path: toPath(path),
+          context: {
+            platform: { name: platform },
+            title,
+            sidebar_order,
+            sidebar_title,
+          },
+          isCommon: true,
+          isGuide: true,
+        };
       }
     }
   }
