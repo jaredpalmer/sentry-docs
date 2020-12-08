@@ -12,6 +12,7 @@ import PlatformContext from "~src/components/platformContext";
 import plugin from "../../plugins/mdxCompiler";
 import globby from "globby";
 import PlatformSidebar from "~src/components/platformSidebar";
+import BasePage from "~src/components/basePage";
 interface PlatformPageProps {
   mdxSource: string;
   slug?: string[];
@@ -66,7 +67,25 @@ export default function PlatformPage({
   });
   return (
     <>
-      <h1>{frontMatter.title}</h1>
+      <BasePage
+        pageContext={{
+          ...frontMatter,
+          platform: { name: platform, title: platform },
+          guide: { name: guide, title: guide },
+        }}
+        seoTitle={frontMatter.title}
+        prependToc={null}
+        sidebar={
+          <PlatformSidebar
+            data={data}
+            platform={{ name: platform, title: platform }}
+            guide={{ name: guide, title: guide }}
+          />
+        }
+      >
+        {content}
+      </BasePage>
+      {/* <h1>{frontMatter.title}</h1>
       <a
         href={`https://docs.sentry.io${router.asPath}`}
         target="_blank"
@@ -99,7 +118,7 @@ export default function PlatformPage({
         <div className="docs-content">
           <>{content}</>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
@@ -256,9 +275,11 @@ export async function getServerSideProps(ctx) {
   // /platforms/java/guides/log4j2/enriching-events/user-feedback -> java/common/enriching-events/user-feedback.mdx
   // /platforms/javascript/guides/react/components/errorboundary/ : javascript/guides/react/components/errorboundary.mdx
   //  javascript/guides/react/components -> javascript/guides/react/components/index.mdx
+  console.log(params.slug.join("/"));
   const maybeEdge = path.resolve(
     path.join("src", "platforms", params.slug.join("/"))
   );
+  console.log(platforms);
   // First we check the leaf
   let source = getMdxAtPath(maybeEdge);
   if (!source) {
