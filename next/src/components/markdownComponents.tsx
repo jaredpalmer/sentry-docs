@@ -1,5 +1,5 @@
 import NextImage from "next/image";
-import qs from "qs";
+import qs from "query-string";
 import * as React from "react";
 import Alert from "~src/components/alert";
 import ConfigKey from "~src/components/configKey";
