@@ -1,30 +1,5 @@
-import React from "react";
-import { StaticQuery, graphql } from "gatsby";
-
+import * as React from "react";
 import DynamicNav, { toTree } from "./dynamicNav";
-
-const navQuery = graphql`
-  query PlatformNavQuery {
-    allSitePage(
-      filter: {
-        context: { draft: { ne: false } }
-        path: { regex: "/^/platforms/" }
-      }
-    ) {
-      nodes {
-        path
-        context {
-          title
-          sidebar_title
-          sidebar_order
-          platform {
-            name
-          }
-        }
-      }
-    }
-  }
-`;
 
 type Node = {
   path: string;
@@ -50,21 +25,17 @@ type Props = {
 };
 
 type ChildProps = Props & {
-  data: {
-    allSitePage: {
-      nodes: Node[];
-    };
-  };
+  data: Node[];
 };
 
-export const PlatformSidebar = ({
+export default function PlatformSidebar({
   platform,
   guide,
   data,
-}: ChildProps): JSX.Element => {
+}: ChildProps): JSX.Element {
   const platformName = platform.name;
   const guideName = guide ? guide.name : null;
-  const tree = toTree(data.allSitePage.nodes.filter(n => !!n.context));
+  const tree = toTree(data);
   console.log(tree);
   const pathRoot = guideName
     ? `platforms/${platformName}/guides/${guideName}`
@@ -120,13 +91,4 @@ export const PlatformSidebar = ({
       />
     </ul>
   );
-};
-
-export default (props: Props): JSX.Element => {
-  return (
-    <StaticQuery
-      query={navQuery}
-      render={data => <PlatformSidebar data={data} {...props} />}
-    />
-  );
-};
+}

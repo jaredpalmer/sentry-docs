@@ -11,17 +11,22 @@ import components from "~src/components/markdownComponents";
 import PlatformContext from "~src/components/platformContext";
 import plugin from "../../plugins/mdxCompiler";
 import globby from "globby";
+import PlatformSidebar from "~src/components/platformSidebar";
 interface PlatformPageProps {
   mdxSource: string;
   slug?: string[];
   guide?: string;
+  platform: string;
   platforms: string[];
   frontMatter: any;
+  data: any;
 }
 export default function PlatformPage({
   mdxSource,
+  platform,
   platforms,
   guide,
+  data,
   frontMatter,
 }: PlatformPageProps): JSX.Element {
   const router = useRouter();
@@ -85,8 +90,15 @@ export default function PlatformPage({
         <option>ruby</option>
         <option>java</option>
       </select>
-      <div className="docs-content">
-        <>{content}</>
+      <div style={{ display: "flex" }}>
+        <PlatformSidebar
+          data={data}
+          platform={{ name: platform, title: platform }}
+          guide={{ name: guide, title: guide }}
+        />
+        <div className="docs-content">
+          <>{content}</>
+        </div>
       </div>
     </>
   );
@@ -313,11 +325,11 @@ export async function getServerSideProps(ctx) {
   for (const realPath of commonPaths) {
     const path = realPath.replace(
       "/common/",
-      guide ? `/${platform}/guide/${guide}/` : `/${platform}/`
+      guide ? `/${platform}/guides/${guide}/` : `/${platform}/`
     );
 
     const {
-      data: { title, sidebar_order = null, sidebar_title = null },
+      data: { title = null, sidebar_order = null, sidebar_title = null },
     } = read(realPath);
     manifest[toPath(path)] = {
       src: realPath,
@@ -341,10 +353,10 @@ export async function getServerSideProps(ctx) {
       if (!realPath.includes("guides")) {
         path = realPath.replace(
           `/${p}/common/`,
-          guide ? `/${platform}/guide/${guide}/` : `/${platform}/`
+          guide ? `/${platform}/guides/${guide}/` : `/${platform}/`
         );
         const {
-          data: { title, sidebar_order, sidebar_title },
+          data: { title = null, sidebar_order = null, sidebar_title = null },
         } = read(realPath);
         manifest[toPath(path)] = {
           src: realPath,
@@ -362,15 +374,6 @@ export async function getServerSideProps(ctx) {
     }
   }
 
-  await fs.writeFile(
-    "manifes.json",
-    JSON.stringify(
-      toTree(Object.values(manifest).filter((n) => !!n.context)),
-      null,
-      2
-    ),
-    "utf8"
-  );
   console.log(Object.keys(manifest));
 
   return {
@@ -378,6 +381,8 @@ export async function getServerSideProps(ctx) {
       mdxSource,
       frontMatter: { ...config, ...data },
       platforms,
+      platform,
+      data: Object.values(manifest).filter((n) => !!n.context),
       guide,
       slug: params.slug,
     },
@@ -398,45 +403,3 @@ function reverseArray<T>(arr: T[]): T[] {
   }
   return newArray;
 }
-
-type Node = {
-  path: string;
-  context: {
-    title?: string | null;
-    sidebar_order?: number | null;
-    sidebar_title?: string | null;
-    [key: string]: any;
-  };
-  [key: string]: any;
-};
-
-type Entity<T> = {
-  name: string;
-  children: T[];
-  node: Node | null;
-};
-export const toTree = (nodeList: Node[]): EntityTree[] => {
-  const result = [];
-  const level = { result };
-
-  nodeList
-    .sort((a, b) => a.path.localeCompare(b.path))
-    .forEach((node) => {
-      let curPath = "";
-      node.path.split("/").reduce((r, name: string, i, a) => {
-        curPath += `${name}/`;
-        if (!r[name]) {
-          r[name] = { result: [] };
-          r.result.push({
-            name,
-            children: r[name].result,
-            node: curPath === node.path ? node : null,
-          });
-        }
-
-        return r[name];
-      }, level);
-    });
-
-  return result[0].children;
-};

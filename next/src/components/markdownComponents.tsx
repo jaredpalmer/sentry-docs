@@ -47,7 +47,7 @@ const components = {
   PlatformIdentifier,
   PlatformSection,
   ConfigKey,
-  img: Image,
+  // img: Image,
 };
 
 export default components;
