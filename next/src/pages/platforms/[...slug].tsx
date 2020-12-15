@@ -13,6 +13,8 @@ import plugin from "../../plugins/mdxCompiler";
 import globby from "globby";
 import PlatformSidebar from "~src/components/platformSidebar";
 import BasePage from "~src/components/basePage";
+import remarkAutolinkHeaders from "~src/plugins/remark-autolink-headers";
+
 interface PlatformPageProps {
   mdxSource: string;
   slug?: string[];
@@ -364,7 +366,10 @@ export async function getServerSideProps(ctx) {
       ),
     },
     mdxOptions: {
-      remarkPlugins: [[plugin, { platform, platforms, frontmatter: data }]],
+      remarkPlugins: [
+        [remarkAutolinkHeaders, { className: "anchor" }],
+        [plugin, { platform, platforms, frontmatter: data }],
+      ],
     },
   });
   return {
