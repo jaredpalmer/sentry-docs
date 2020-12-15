@@ -158,17 +158,13 @@ const getGuideFromUrl = (url: string): string | null => {
 
 const getMdxAtPath = (filepath: string) => {
   let source;
-  const fileExists = fs.existsSync(filepath + ".mdx");
-  const fileIndexExists = fs.existsSync(filepath + "/index.mdx");
+  const fileExists = fs.existsSync(filepath);
+
   if (fileExists) {
-    console.log("file exists: " + filepath + ".mdx");
-    source = fs.readFileSync(filepath + ".mdx", "utf8");
-  } else if (fileIndexExists) {
-    console.log("file exists: " + filepath + "/index.mdx");
-    source = fs.readFileSync(filepath + "/index.mdx", "utf8");
+    console.log("file exists: " + filepath);
+    source = fs.readFileSync(filepath, "utf-8");
   } else {
-    console.log(`file not found: ${filepath}.mdx`);
-    console.log(`file not found: ${filepath}/index.mdx`);
+    console.log(`file not found: ${filepath}`);
   }
 
   return source;
@@ -272,69 +268,7 @@ export async function getServerSideProps(ctx) {
     platform && platform,
     rawPlatformConfig && rawPlatformConfig.fallbackPlatform,
   ].filter(Boolean);
-  // /platforms/java/guides/log4j2/enriching-events/user-feedback -> java/common/enriching-events/user-feedback.mdx
-  // /platforms/javascript/guides/react/components/errorboundary/ : javascript/guides/react/components/errorboundary.mdx
-  //  javascript/guides/react/components -> javascript/guides/react/components/index.mdx
-  console.log(params.slug.join("/"));
-  const maybeEdge = path.resolve(
-    path.join("src", "platforms", params.slug.join("/"))
-  );
-  console.log(platforms);
-  // First we check the leaf
-  let source = getMdxAtPath(maybeEdge);
-  if (!source) {
-    // Next check the shared platform-specific common folder, with same path
-    const platformCommon = path.join(
-      "src",
-      "platforms",
-      platform,
-      "common",
-      ...(guide ? params.slug.slice(3) : params.slug.slice(1))
-    );
-    source = getMdxAtPath(platformCommon);
-    if (!source) {
-      // Next check the shared common folder, with same path
-      const sharedCommon = path.join(
-        "src",
-        "platforms",
-        "common",
-        ...(guide ? params.slug.slice(3) : params.slug.slice(1))
-      );
-      source = getMdxAtPath(sharedCommon);
-    }
-  }
 
-  if (!source) {
-    return { notFound: true };
-  }
-
-  // Collect frontmatter and content (useful later?)
-  const { data, content } = matter(source);
-
-  if (!content) {
-    return { notFound: true };
-  }
-
-  // Call renderToString with dynamic resolution for <PlatformContent>
-  const mdxSource = await renderToString(content, {
-    components: {
-      ...components,
-      wrapper: ({ children }) => (
-        <PlatformContext.Provider
-          value={{
-            frontMatter: data,
-            platforms,
-            guide,
-          }}
-        >
-          {children}
-        </PlatformContext.Provider>
-      ),
-    },
-    mdxOptions: {
-      remarkPlugins: [[plugin, { platform, platforms, frontmatter: data }]],
-    },
-  });
   console.log(platforms);
 
   const manifest = {};
@@ -395,8 +329,44 @@ export async function getServerSideProps(ctx) {
     }
   }
 
-  console.log(Object.keys(manifest));
+  // console.log(manifest);
+  console.log("/platforms/" + params?.slug.join("/") + "/");
+  const src = manifest["/platforms/" + params?.slug.join("/") + "/"];
+  if (!src) {
+    return { notFound: true };
+  }
+  const source = getMdxAtPath(src.src);
+  if (!source) {
+    return { notFound: true };
+  }
 
+  const { data, content } = matter(source);
+
+  // Collect frontmatter and content (useful later?)
+
+  if (!content) {
+    return { notFound: true };
+  }
+  // Call renderToString with dynamic resolution for <PlatformContent>
+  const mdxSource = await renderToString(content, {
+    components: {
+      ...components,
+      wrapper: ({ children }) => (
+        <PlatformContext.Provider
+          value={{
+            frontMatter: data,
+            platforms,
+            guide,
+          }}
+        >
+          {children}
+        </PlatformContext.Provider>
+      ),
+    },
+    mdxOptions: {
+      remarkPlugins: [[plugin, { platform, platforms, frontmatter: data }]],
+    },
+  });
   return {
     props: {
       mdxSource,
