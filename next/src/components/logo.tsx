@@ -4,7 +4,7 @@ type Props = {
   loading?: boolean;
 };
 
-export default ({ loading }: Props): JSX.Element => {
+const Logo = ({ loading }: Props): JSX.Element => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -24,3 +24,5 @@ export default ({ loading }: Props): JSX.Element => {
     </svg>
   );
 };
+
+export default Logo;

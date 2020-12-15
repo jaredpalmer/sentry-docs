@@ -2,7 +2,7 @@ import React from "react";
 
 import SmartLink from "./smartLink";
 
-export default (): JSX.Element => {
+const Header = (): JSX.Element => {
   return (
     <div className="navbar navbar-expand-md navbar-light bg-white global-header">
       <SmartLink
@@ -44,3 +44,5 @@ export default (): JSX.Element => {
     </div>
   );
 };
+
+export default Header;

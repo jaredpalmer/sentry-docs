@@ -54,14 +54,16 @@ type Props = {
   prependToc?: JSX.Element;
 };
 
-export default ({
-  data: { file } = {},
-  pageContext = {},
-  seoTitle,
-  sidebar,
-  children,
-  prependToc,
-}: Props): JSX.Element => {
+const BasePage = (
+  {
+    data: { file } = {},
+    pageContext = {},
+    seoTitle,
+    sidebar,
+    children,
+    prependToc,
+  }: Props
+): JSX.Element => {
   const tx = Sentry.getCurrentHub().getScope().getTransaction();
   if (tx) {
     tx.setStatus("ok");
@@ -118,3 +120,5 @@ export default ({
     </Layout>
   );
 };
+
+export default BasePage;

@@ -5,7 +5,7 @@ import PlatformIcon from "platformicons";
 import usePlatform, { usePlatformList } from "./hooks/usePlatform";
 import SmartLink from "./smartLink";
 
-export default () => {
+const NavbarPlatformDropdown = () => {
   const platformList = usePlatformList();
   const [currentPlatform] = usePlatform(null, false, false);
   return (
@@ -53,3 +53,5 @@ export default () => {
     </NavDropdown>
   );
 };
+
+export default NavbarPlatformDropdown;
