@@ -13,7 +13,6 @@ const toString = require("mdast-util-to-string");
 const visit = require("unist-util-visit");
 const slugs = require("github-slugger")();
 const deburr = require("lodash.deburr");
-
 function patch(context, key, value) {
   if (!context[key]) {
     context[key] = value;
@@ -45,7 +44,7 @@ module.exports = ({
         const last = node.children[node.children.length - 1];
         // This regex matches to preceding spaces and {#custom-id} at the end of a string.
         // Also, checks the text of node won't be empty after the removal of {#custom-id}.
-        const match = /^(.*?)\s*\{#([\w-]+)\}$/.exec(toString(last));
+        const match = /^(.*?)\s*#([\w-]+)$/.exec(toString(last));
         if (match && (match[1] || node.children.length > 1)) {
           id = match[2];
           // Remove the custom ID from the original text.
@@ -93,6 +92,7 @@ module.exports = ({
           },
         });
       }
+      return tree;
     });
   };
 };
