@@ -20,7 +20,9 @@ function getTabTitle(node) {
 }
 
 // TODO(dcramer): this should only operate on MDX
-module.exports = ({ className = "code-tabs-wrapper" }) => (markdownAST) => {
+module.exports = ({ className = "code-tabs-wrapper" } = {}) => (
+  markdownAST
+) => {
   let lastParent = null;
   let pendingCode = [];
   let toRemove = [];
@@ -35,15 +37,13 @@ module.exports = ({ className = "code-tabs-wrapper" }) => (markdownAST) => {
       (arr, [node]) =>
         arr.concat([
           {
-            type: "jsx",
-            value: `<CodeBlock language="${
-              node.lang || ""
-            }" title="${getTabTitle(node)}" filename="${getFilename(node)}">`,
+            type: "mdxBlockElement",
+            value: `CodeBlock`,
           },
           Object.assign({}, node),
           {
-            type: "jsx",
-            value: "</CodeBlock>",
+            type: "mdxBlockElement",
+            value: "CodeBlock",
           },
         ]),
       []
@@ -58,12 +58,12 @@ module.exports = ({ className = "code-tabs-wrapper" }) => (markdownAST) => {
     };
     rootNode.children = [
       {
-        type: "jsx",
+        type: "mdxBlockElement",
         value: `<CodeTabs>`,
       },
       ...children,
       {
-        type: "jsx",
+        type: "mdxBlockElement",
         value: "</CodeTabs>",
       },
     ];
@@ -91,5 +91,6 @@ module.exports = ({ className = "code-tabs-wrapper" }) => (markdownAST) => {
   toRemove.forEach(([node, parent]) => {
     parent.children = parent.children.filter((n) => n !== node);
   });
+
   return markdownAST;
 };

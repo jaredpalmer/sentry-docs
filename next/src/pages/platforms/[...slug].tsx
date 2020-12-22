@@ -14,6 +14,7 @@ import globby from "globby";
 import PlatformSidebar from "~src/components/platformSidebar";
 import BasePage from "~src/components/basePage";
 import remarkAutolinkHeaders from "~src/plugins/remark-autolink-headers";
+import remarkPluginCodetabs from "~src/plugins/remark-plugin-codetabs";
 
 interface PlatformPageProps {
   mdxSource: string;
@@ -367,11 +368,13 @@ export async function getServerSideProps(ctx) {
     },
     mdxOptions: {
       remarkPlugins: [
-        [remarkAutolinkHeaders, { className: "anchor" }],
         [plugin, { platform, platforms, frontmatter: data }],
+        [remarkPluginCodetabs, { className: "code-tabs-wrapper" }],
+        [remarkAutolinkHeaders, { className: "anchor" }],
       ],
     },
   });
+
   return {
     props: {
       mdxSource,
