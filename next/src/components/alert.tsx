@@ -8,13 +8,13 @@ type Props = {
   children?: any;
 };
 
-export default ({
+export default function Alert({
   title,
   children,
   level,
   deepLink,
   dismiss = false,
-}: Props): JSX.Element => {
+}: Props): JSX.Element {
   let className = "alert";
   if (level) {
     className += ` alert-${level}`;
@@ -38,4 +38,4 @@ export default ({
       <div className="alert-body content-flush-bottom">{children}</div>
     </div>
   );
-};
+}
