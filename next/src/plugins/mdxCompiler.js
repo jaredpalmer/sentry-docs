@@ -56,6 +56,6 @@ module.exports = (opts = {}) => (tree) => {
       }
     }
   });
-
+  console.log(tree);
   return tree;
 };

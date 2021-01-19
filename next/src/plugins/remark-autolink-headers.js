@@ -13,6 +13,7 @@ const toString = require("mdast-util-to-string");
 const visit = require("unist-util-visit");
 const slugs = require("github-slugger")();
 const deburr = require("lodash.deburr");
+const { fsync } = require("fs-extra");
 function patch(context, key, value) {
   if (!context[key]) {
     context[key] = value;

@@ -1,7 +1,6 @@
-import { NextRouter } from "next/router";
-import { MouseEvent } from "react";
+import type { NextRouter } from "next/router";
 
-function hasModifier(event: MouseEvent<any>) {
+function hasModifier(event: any) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 /**
@@ -12,7 +11,7 @@ export default function addRouterEvents(
   router: NextRouter,
   { href }: { href: string }
 ) {
-  function onClick(e: React.SyntheticEvent<any>) {
+  function onClick(e: any) {
     const linkTarget = e.currentTarget.target;
     if (
       !(

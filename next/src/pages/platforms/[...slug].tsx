@@ -1,4 +1,6 @@
+import rehypePrism from "@mapbox/rehype-prism";
 import fs from "fs-extra";
+import globby from "globby";
 import matter, { read } from "gray-matter";
 import yaml from "js-yaml";
 import hydrate from "next-mdx-remote/hydrate";
@@ -7,15 +9,15 @@ import { useRouter } from "next/router";
 import path from "path";
 import * as React from "react";
 import addRouterEvents from "~src/components/addRouterEvents";
+import BasePage from "~src/components/basePage";
+import CodeContext, { useCodeContextState } from "~src/components/codeContext";
 import components from "~src/components/markdownComponents";
 import PlatformContext from "~src/components/platformContext";
-import plugin from "../../plugins/mdxCompiler";
-import globby from "globby";
 import PlatformSidebar from "~src/components/platformSidebar";
-import BasePage from "~src/components/basePage";
 import remarkAutolinkHeaders from "~src/plugins/remark-autolink-headers";
 import remarkPluginCodetabs from "~src/plugins/remark-plugin-codetabs";
-
+import plugin from "../../plugins/mdxCompiler";
+// import remarkPrism from "remark-prism";
 interface PlatformPageProps {
   mdxSource: string;
   slug?: string[];
@@ -39,7 +41,6 @@ export default function PlatformPage({
     document
       .querySelectorAll(".docs-content .relative-link")
       .forEach((node) => {
-        console.log(node);
         const href = node.getAttribute("href");
         // Exclude paths like #setup and hashes that have the same current path
         if (href && href[0] !== "#") {
@@ -61,11 +62,16 @@ export default function PlatformPage({
   const content = hydrate(mdxSource, {
     components: {
       ...components,
-      wrapper: ({ children }) => (
-        <PlatformContext.Provider value={{ platforms, guide, frontMatter }}>
-          {children}
-        </PlatformContext.Provider>
-      ),
+      wrapper: ({ children }) => {
+        const codeContext = useCodeContextState();
+        return (
+          <PlatformContext.Provider value={{ platforms, guide, frontMatter }}>
+            <CodeContext.Provider value={codeContext}>
+              {children}
+            </CodeContext.Provider>
+          </PlatformContext.Provider>
+        );
+      },
     },
   });
   return (
@@ -354,24 +360,30 @@ export async function getServerSideProps(ctx) {
   const mdxSource = await renderToString(content, {
     components: {
       ...components,
-      wrapper: ({ children }) => (
-        <PlatformContext.Provider
-          value={{
-            frontMatter: data,
-            platforms,
-            guide,
-          }}
-        >
-          {children}
-        </PlatformContext.Provider>
-      ),
+      wrapper: ({ children }) => {
+        const codeContext = useCodeContextState();
+        return (
+          <PlatformContext.Provider
+            value={{
+              frontMatter: data,
+              platforms,
+              guide,
+            }}
+          >
+            <CodeContext.Provider value={codeContext}>
+              {children}
+            </CodeContext.Provider>
+          </PlatformContext.Provider>
+        );
+      },
     },
     mdxOptions: {
       remarkPlugins: [
-        [plugin, { platform, platforms, frontmatter: data }],
+        [plugin, { platform, platforms, frontmatter: data }], // this has to go first
         [remarkPluginCodetabs, { className: "code-tabs-wrapper" }],
         [remarkAutolinkHeaders, { className: "anchor" }],
       ],
+      rehypePlugins: [rehypePrism],
     },
   });
 
@@ -381,7 +393,7 @@ export async function getServerSideProps(ctx) {
       frontMatter: { ...config, ...data },
       platforms,
       platform,
-      data: Object.values(manifest).filter((n) => !!n.context),
+      data: Object.values(manifest).filter((n: any) => !!n.context),
       guide,
       slug: params.slug,
     },

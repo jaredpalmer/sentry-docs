@@ -1,20 +1,18 @@
-import { useRouter } from "next/router";
 import React from "react";
-
 import { Nav } from "react-bootstrap";
-
 // import Search from "./search";
 import SmartLink from "./smartLink";
 
 // import NavbarProductDropdown from "./navbarProductDropdown";
 // import NavbarPlatformDropdown from "./navbarPlatformDropdown";
 
-type Props = {
+export type Props = {
   platforms?: string[];
 };
 
+// eslint-disable-next-line no-unused-vars
 export default function Navbar({ platforms }: Props): JSX.Element {
-  const router = useRouter();
+  // const router = useRouter();
 
   return (
     <div className="navbar navbar-expand-md navbar-light global-header">

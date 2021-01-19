@@ -1,11 +1,9 @@
+import * as Sentry from "@sentry/gatsby";
 import React, { useRef } from "react";
-
-import CodeContext, { useCodeContextState } from "./codeContext";
 // import SEO from "./seo";
 import Layout from "./layout";
 import SmartLink from "./smartLink";
 import TableOfContents from "./tableOfContents";
-import * as Sentry from "@sentry/gatsby";
 
 type GitHubCTAProps = {
   sourceInstanceName: string;
@@ -54,27 +52,25 @@ type Props = {
   prependToc?: JSX.Element;
 };
 
-const BasePage = (
-  {
-    data: { file } = {},
-    pageContext = {},
-    seoTitle,
-    sidebar,
-    children,
-    prependToc,
-  }: Props
-): JSX.Element => {
+const BasePage = ({
+  data: { file } = {},
+  pageContext = {},
+  // seoTitle,
+  sidebar,
+  children,
+  prependToc,
+}: Props): JSX.Element => {
   const tx = Sentry.getCurrentHub().getScope().getTransaction();
   if (tx) {
     tx.setStatus("ok");
   }
 
-  const { title, excerpt, description } = pageContext;
+  // const { title } = pageContext;
   const hasToc = !pageContext.notoc;
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const pageDescription = description || (excerpt ? excerpt.slice(0, 160) : "");
+  // const pageDescription = description || (excerpt ? excerpt.slice(0, 160) : "");
 
   return (
     <Layout {...{ sidebar, pageContext }}>
@@ -82,7 +78,7 @@ const BasePage = (
         title={seoTitle || title}
         description={pageDescription}
         noindex={pageContext.noindex}
-      /> */}
+      />  */}
 
       <div className="row">
         <div
@@ -92,18 +88,16 @@ const BasePage = (
               : "col-12"
           }
         >
-          <h1 className="mb-3">{title}</h1>
+          {/* <h1 className="mb-3">{title}</h1> */}
           <div id="main" ref={contentRef}>
-            <CodeContext.Provider value={useCodeContextState()}>
-              {children}
-            </CodeContext.Provider>
+            {children}
 
-            {/* {file && (
+            {file && (
               <GitHubCTA
                 sourceInstanceName={file.sourceInstanceName}
                 relativePath={file.relativePath}
               />
-            )} */}
+            )}
           </div>
         </div>
         {(hasToc || prependToc) && (

@@ -44,18 +44,34 @@ Object {
               "type": "paragraph",
             },
             Object {
+              "attributes": Array [],
               "children": Array [
                 Object {
-                  "type": "jsx",
-                  "value": "<CodeTabs>",
-                },
-                Object {
-                  "type": "jsx",
-                  "value": "<CodeBlock language=\\"plain\\" title=\\"\\" filename=\\"\\">",
-                },
-                Object {
+                  "attributes": Array [
+                    Object {
+                      "name": "language",
+                      "type": "mdxBlockAttribute",
+                      "value": "plain",
+                    },
+                    Object {
+                      "name": "children",
+                      "type": "mdxBlockAttribute",
+                      "value": "inside list",
+                    },
+                    Object {
+                      "name": "title",
+                      "type": "mdxBlockAttribute",
+                      "value": "",
+                    },
+                    Object {
+                      "name": "filename",
+                      "type": "mdxBlockAttribute",
+                      "value": "",
+                    },
+                  ],
                   "lang": "plain",
                   "meta": null,
+                  "name": "CodeBlock",
                   "position": Position {
                     "end": Object {
                       "column": 7,
@@ -72,44 +88,12 @@ Object {
                       "offset": 19,
                     },
                   },
-                  "type": "code",
+                  "type": "mdxBlockElement",
                   "value": "inside list",
                 },
-                Object {
-                  "type": "jsx",
-                  "value": "</CodeBlock>",
-                },
-                Object {
-                  "type": "jsx",
-                  "value": "</CodeTabs>",
-                },
               ],
-              "data": Object {
-                "hName": "div",
-                "hProperties": Object {
-                  "className": "code-tabs-wrapper",
-                },
-              },
-              "lang": "plain",
-              "meta": null,
-              "position": Position {
-                "end": Object {
-                  "column": 7,
-                  "line": 5,
-                  "offset": 49,
-                },
-                "indent": Array [
-                  4,
-                  4,
-                ],
-                "start": Object {
-                  "column": 4,
-                  "line": 3,
-                  "offset": 19,
-                },
-              },
-              "type": "element",
-              "value": "inside list",
+              "name": "CodeTabs",
+              "type": "mdxBlockElement",
             },
           ],
           "position": Position {
@@ -156,18 +140,34 @@ Object {
       "type": "list",
     },
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"plain\\" title=\\"\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "plain",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "outside list",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "plain",
           "meta": null,
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -184,44 +184,12 @@ Object {
               "offset": 51,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "outside list",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "plain",
-      "meta": null,
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 9,
-          "offset": 76,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 7,
-          "offset": 51,
-        },
-      },
-      "type": "element",
-      "value": "outside list",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
   ],
   "position": Object {
@@ -244,18 +212,34 @@ exports[`gatsby-plugin-code-tabs does not fold code blocks split by a paragraph 
 Object {
   "children": Array [
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"python\\" title=\\"\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "python",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "print \\"Hello World!\\"",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "python",
           "meta": null,
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -272,44 +256,12 @@ Object {
               "offset": 1,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "print \\"Hello World!\\"",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "python",
-      "meta": null,
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 4,
-          "offset": 35,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 2,
-          "offset": 1,
-        },
-      },
-      "type": "element",
-      "value": "print \\"Hello World!\\"",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
     Object {
       "children": Array [
@@ -347,18 +299,34 @@ Object {
       "type": "paragraph",
     },
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"javascript\\" title=\\"\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "javascript",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "console.log(\\"Hello World!\\");",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "javascript",
           "meta": null,
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -375,44 +343,12 @@ Object {
               "offset": 54,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "console.log(\\"Hello World!\\");",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "javascript",
-      "meta": null,
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 10,
-          "offset": 100,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 8,
-          "offset": 54,
-        },
-      },
-      "type": "element",
-      "value": "console.log(\\"Hello World!\\");",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
   ],
   "position": Object {
@@ -435,18 +371,34 @@ exports[`gatsby-plugin-code-tabs folds two code blocks 1`] = `
 Object {
   "children": Array [
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"python\\" title=\\"\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "python",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "print \\"Hello World!\\"",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "python",
           "meta": null,
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -463,20 +415,35 @@ Object {
               "offset": 1,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "print \\"Hello World!\\"",
         },
         Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"javascript\\" title=\\"\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "javascript",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "console.log(\\"Hello World!\\");",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "javascript",
           "meta": null,
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -493,44 +460,12 @@ Object {
               "offset": 37,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "console.log(\\"Hello World!\\");",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "python",
-      "meta": null,
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 4,
-          "offset": 35,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 2,
-          "offset": 1,
-        },
-      },
-      "type": "element",
-      "value": "print \\"Hello World!\\"",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
   ],
   "position": Object {
@@ -553,18 +488,34 @@ exports[`gatsby-plugin-code-tabs supports filenames 1`] = `
 Object {
   "children": Array [
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"plain\\" title=\\"Hello\\" filename=\\"hello.txt\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "plain",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "first",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "Hello",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "hello.txt",
+            },
+          ],
           "lang": "plain",
           "meta": "{tabTitle: Hello} {filename: hello.txt}",
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -581,20 +532,35 @@ Object {
               "offset": 1,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "first",
         },
         Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"plain\\" title=\\"Goodbye\\" filename=\\"goodbye.txt\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "plain",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "second",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "Goodbye",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "goodbye.txt",
+            },
+          ],
           "lang": "plain",
           "meta": "{tabTitle: Goodbye} {filename: goodbye.txt}",
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -611,44 +577,12 @@ Object {
               "offset": 61,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "second",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "plain",
-      "meta": "{tabTitle: Hello} {filename: hello.txt}",
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 4,
-          "offset": 59,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 2,
-          "offset": 1,
-        },
-      },
-      "type": "element",
-      "value": "first",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
   ],
   "position": Object {
@@ -671,18 +605,34 @@ exports[`gatsby-plugin-code-tabs supports tab titles 1`] = `
 Object {
   "children": Array [
     Object {
+      "attributes": Array [],
       "children": Array [
         Object {
-          "type": "jsx",
-          "value": "<CodeTabs>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"plain\\" title=\\"Hello\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "plain",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "first",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "Hello",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "plain",
           "meta": "{tabTitle: Hello}",
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -699,20 +649,35 @@ Object {
               "offset": 1,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "first",
         },
         Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "<CodeBlock language=\\"plain\\" title=\\"Goodbye\\" filename=\\"\\">",
-        },
-        Object {
+          "attributes": Array [
+            Object {
+              "name": "language",
+              "type": "mdxBlockAttribute",
+              "value": "plain",
+            },
+            Object {
+              "name": "children",
+              "type": "mdxBlockAttribute",
+              "value": "second",
+            },
+            Object {
+              "name": "title",
+              "type": "mdxBlockAttribute",
+              "value": "Goodbye",
+            },
+            Object {
+              "name": "filename",
+              "type": "mdxBlockAttribute",
+              "value": "",
+            },
+          ],
           "lang": "plain",
           "meta": "{tabTitle: Goodbye}",
+          "name": "CodeBlock",
           "position": Position {
             "end": Object {
               "column": 4,
@@ -729,44 +694,12 @@ Object {
               "offset": 39,
             },
           },
-          "type": "code",
+          "type": "mdxBlockElement",
           "value": "second",
         },
-        Object {
-          "type": "jsx",
-          "value": "</CodeBlock>",
-        },
-        Object {
-          "type": "jsx",
-          "value": "</CodeTabs>",
-        },
       ],
-      "data": Object {
-        "hName": "div",
-        "hProperties": Object {
-          "className": "code-tabs-wrapper",
-        },
-      },
-      "lang": "plain",
-      "meta": "{tabTitle: Hello}",
-      "position": Position {
-        "end": Object {
-          "column": 4,
-          "line": 4,
-          "offset": 37,
-        },
-        "indent": Array [
-          1,
-          1,
-        ],
-        "start": Object {
-          "column": 1,
-          "line": 2,
-          "offset": 1,
-        },
-      },
-      "type": "element",
-      "value": "first",
+      "name": "CodeTabs",
+      "type": "mdxBlockElement",
     },
   ],
   "position": Object {
